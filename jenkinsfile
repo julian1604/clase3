@@ -1,0 +1,65 @@
+def PROJECT_ID = "jenkins-servinformacion"
+def imageTag = "gcr.io/${PROJECT_ID}/hello-node:${BUILD_NUMBER}"
+def CLUSTER = "jenkins-cd"
+def ZONE = "us-central1-c"
+pipeline {
+  agent {
+    kubernetes {
+            defaultContainer 'jnlp'
+            yamlFile "agent.yaml"
+    }
+  }
+  stages {
+    stage('Git clone') {
+            steps {
+                git credentialsId: 'gitlaby', url: 'https://gitlab.com/zyerson/hello-node-ingress'
+                echo 'git clonado....'
+            }
+    }
+    stage('Initialize') {
+      steps {
+            container('gcloud') {
+                    sh 'gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS'
+                    sh "gcloud config set project ${PROJECT_ID}"
+                 }
+            container('docker') {
+                sh "apk update"
+                sh "apk add curl"
+                sh "curl -fsSL https://github.com/GoogleCloudPlatform/docker-credential-gcr/releases/download/v2.0.0/docker-credential-gcr_linux_amd64-2.0.0.tar.gz | tar xz --to-stdout ./docker-credential-gcr > /usr/bin/docker-credential-gcr && chmod +x /usr/bin/docker-credential-gcr"
+                sh "docker-credential-gcr configure-docker"
+                sh 'docker --version'
+                sh 'ls'
+        }
+       
+      }
+    }
+   stage('build') {
+      steps {
+        container('docker') {
+                sh 'docker --version'
+                sh 'docker build -t node-hello .'
+                sh 'docker images'
+                sh "docker tag node-hello gcr.io/${PROJECT_ID}/node-hello/node-hello:${BUILD_NUMBER}"
+                sh 'docker images'    
+        }
+        container('gcloud') {
+                    sh "gcloud builds submit --gcs-log-dir=gs://jenkins-servinformacion_logs/logs/ --tag=${imageTag} ."    
+                } 
+      }
+    } 
+stage('Deploy') {
+            steps {
+                container('gcloud') {
+                    sh 'gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS'
+                    sh "gcloud config set project ${PROJECT_ID}"
+                    sh "gcloud container clusters get-credentials jenkins-cd --zone us-central1-c --project jenkins-servinformacion"
+                    git credentialsId: 'gitlaby', url: 'https://gitlab.com/zyerson/hello-node-ingress'  
+                    sh "sed -i.bak 's#{imageTag}#${imageTag}#' deployment.yaml"
+                    sh "cat deployment.yaml"
+                    sh "kubectl apply -f deployment.yaml"
+                    echo 'desplegando'
+                }
+            }
+        }
+  }
+}
