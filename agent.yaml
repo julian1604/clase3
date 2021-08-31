@@ -1,0 +1,52 @@
+apiversion: v1
+kind: Pod
+metadata:
+  labels:
+    component: ci
+spec:
+  volumes:  
+  - name: dockersock
+    hostPath:
+      path: "/var/run/docker.sock"
+  - name: docker
+    hostPath:
+      path: "/usr/bin/docker"
+  - name: google-cloud-key
+    secret:
+      secretName: token-jenk
+  containers:
+  - name: gcloud
+    image: gcr.io/cloud-builders/gcloud
+    volumeMounts:
+    - name: google-cloud-key
+      readOnly: true
+      mountPath: "/var/secrets/google"
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /var/secrets/google/key.json
+    - name: docker
+      mountPath: "/usr/bin/docker"
+    - name: dockersock
+      mountPath: "/var/run/docker.sock"
+    command:
+    - cat
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /var/secrets/google/key.json
+    tty: true
+  - name: docker
+    image: docker:18.09
+    volumeMounts:
+    - name: google-cloud-key
+      readOnly: true
+      mountPath: "/var/secrets/google"
+    - name: docker
+      mountPath: "/usr/bin/docker"
+    - name: dockersock
+      mountPath: "/var/run/docker.sock"
+    command:
+    - cat
+    env:
+    - name: GOOGLE_APPLICATION_CREDENTIALS
+      value: /var/secrets/google/key.json
+    tty: true
