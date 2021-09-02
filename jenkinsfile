@@ -79,10 +79,10 @@ spec:
         }
       }
     }
-    stage('Build') {
+    stage('node') {
       steps {
         container('gcloud') {
-          echo 'construccion'
+          sh "yarn install"
         }
       }
     }
