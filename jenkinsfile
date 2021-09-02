@@ -1,6 +1,6 @@
 //  Archivo Jenkinsfile para api-template
 //
-//  by: J
+//  by: Julian
 
 def PROJECT_ID = "jenkins-servinformacion"
 def imageTag = "gcr.io/${PROJECT_ID}/${JOB_NAME}:${BUILD_NUMBER}".replaceAll("%2","/").toLowerCase();
