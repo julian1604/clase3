@@ -28,6 +28,11 @@ spec:
     secret:
       secretName: token-jenk
   containers:
+  - name: node
+    image: node:14.17.6
+    command:
+    - cat
+    tty: true  
   - name: gcloud
     image: gcr.io/cloud-builders/gcloud
     volumeMounts:
