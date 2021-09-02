@@ -97,7 +97,7 @@ spec:
     }
     stage('Publish-Image'){
       steps {
-        container('gcloud') {
+        container('docker') {
           sh "cat /var/secrets/google/key.json  | docker login -u _json_key --password-stdin gcr.io"
           sh "docker push ${imageTag}"
         }
