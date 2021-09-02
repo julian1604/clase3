@@ -2,6 +2,8 @@
 //
 //  by: J
 
+def PROJECT_ID = "jenkins-servinformacion"
+def imageTag = "gcr.io/${PROJECT_ID}/${JOB_NAME}:${BUILD_NUMBER}".replaceAll("%2","/").toLowerCase();
 
 pipeline {
   options {
@@ -81,7 +83,7 @@ spec:
     }
     stage('node') {
       steps {
-        container('gcloud') {
+        container('node') {
           sh "yarn install"
         }
       }
