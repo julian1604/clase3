@@ -117,13 +117,13 @@ spec:
       // Developer Branches
       when { branch pattern: "release.*|staging.*|hotfix.*", comparator: "REGEXP"}
       steps {
-        container('kubectl') {
+        container('gcloud') {
           echo 'QA'
         }
       }
     }
     stage ('Aprobacion Produccion') {
-      when { branch 'master' }
+      when { branch 'main' }
       steps {
         timeout(time:2, unit:'DAYS'){
             input message: 'Aprueba Despliegue Ambiente Produccion?',
@@ -132,10 +132,17 @@ spec:
       }
     }
     stage ('Deploy Produccion') {
-      when { branch 'master' }
+      when { branch 'main' }
       steps {
-        container('kubectl') {
+        container('gcloud') {
           echo 'produccion'
+          sh 'gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS'
+          sh "gcloud config set project ${PROJECT_ID}"
+          sh "gcloud container clusters get-credentials jenkins-cd --zone us-central1-c --project jenkins-servinformacion"
+          sh "sed -i.bak 's#{imageTag}#${imageTag}#' /k8s/deployment.yaml"
+          sh "cat /k8s/deployment.yaml"
+          sh "kubectl apply -f /k8s/deployment.yaml"
+          echo 'desplegando'
         }
       }
     }
