@@ -133,7 +133,7 @@ spec:
      // }
   //  }
     stage ('Deploy Produccion') {
-      when { branch 'main' }
+    //  when { branch 'main' }
       steps {
         container('gcloud') {
           echo 'produccion'
