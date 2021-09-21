@@ -122,15 +122,15 @@ spec:
         }
       }
     }
-    stage ('Aprobacion Produccion') {
-      when { branch 'main' }
-      steps {
-        timeout(time:2, unit:'DAYS'){
-            input message: 'Aprueba Despliegue Ambiente Produccion?',
-            submitter: 'DevOps'
-        }
-      }
-    }
+//    stage ('Aprobacion Produccion') {
+//      when { branch 'main' }
+//      steps {
+ //       timeout(time:2, unit:'DAYS'){
+   //         input message: 'Aprueba Despliegue Ambiente Produccion?',
+     //       submitter: 'DevOps'
+     //   }
+     // }
+  //  }
     stage ('Deploy Produccion') {
       when { branch 'main' }
       steps {
