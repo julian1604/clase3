@@ -146,6 +146,7 @@ spec:
           echo 'Deploy develop'
         }
       }
+     }
     }
     stage('Deploy Staging') {
       // Developer Branches
@@ -156,6 +157,7 @@ spec:
           echo 'Deploy Staging (QA)'
         }
       }
+     }
     }
 //    stage ('Aprobacion Produccion') {
 //      when { branch 'main' }
