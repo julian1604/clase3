@@ -171,6 +171,7 @@ spec:
     stage ('Deploy Produccion') {
     when {
             expression { BRANCH_NAME ==~ /refs\/heads\/(main|master)/ }
+    }
       steps {
         container('gcloud') {
           echo 'produccion'
