@@ -141,23 +141,23 @@ spec:
       // Developer Branches
      when {
             expression { BRANCH_NAME ==~ /refs\/heads\/(feature.*)/ }
+     }
       steps {
         container('gcloud') {
           echo 'Deploy develop'
         }
       }
-     }
     }
     stage('Deploy Staging') {
       // Developer Branches
       when {
             expression { BRANCH_NAME ==~ /refs\/heads\/(release.*)/ }
+      }
       steps {
         container('gcloud') {
           echo 'Deploy Staging (QA)'
         }
       }
-     }
     }
 //    stage ('Aprobacion Produccion') {
 //      when { branch 'main' }
