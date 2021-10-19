@@ -90,7 +90,7 @@ spec:
         }
       }
     }
-    stage('Build-Image-feature'){
+    stage('Build-Image-feature-develop'){
       when {
             expression { BRANCH_NAME ==~ /refs\/heads\/(feature.*)/ }
            }
@@ -100,7 +100,7 @@ spec:
         }
       }
     }
-    stage('Build-Image-release'){
+    stage('Build-Image-release-staging'){
       when {
             expression { BRANCH_NAME ==~ /refs\/heads\/(release.*)/ }
            } 
@@ -139,19 +139,21 @@ spec:
 
     stage('Deploy develop') {
       // Developer Branches
-      when { branch pattern: "feature.*|develop.*", comparator: "REGEXP"}
+     when {
+            expression { BRANCH_NAME ==~ /refs\/heads\/(feature.*)/ }
       steps {
         container('gcloud') {
-          echo 'develop'
+          echo 'Deploy develop'
         }
       }
     }
     stage('Deploy Staging') {
       // Developer Branches
-      when { branch pattern: "release.*|staging.*|hotfix.*", comparator: "REGEXP"}
+      when {
+            expression { BRANCH_NAME ==~ /refs\/heads\/(release.*)/ }
       steps {
         container('gcloud') {
-          echo 'QA'
+          echo 'Deploy Staging (QA)'
         }
       }
     }
@@ -165,7 +167,8 @@ spec:
      // }
   //  }
     stage ('Deploy Produccion') {
-    //  when { branch 'main' }
+    when {
+            expression { BRANCH_NAME ==~ /refs\/heads\/(main|master)/ }
       steps {
         container('gcloud') {
           echo 'produccion'
