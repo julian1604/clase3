@@ -144,7 +144,15 @@ spec:
      }
       steps {
         container('gcloud') {
-          echo 'Deploy develop'
+          echo 'develop'
+          sh 'gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS'
+          sh "gcloud config set project ${PROJECT_ID}"
+          sh "gcloud container clusters get-credentials jenkins-cd --zone us-central1-c --project jenkins-servinformacion"
+          sh "sed -i.bak 's#{imageTag}#${imageTag}#' k8s/develop/deployment.yaml"
+          sh "cat k8s/develop/deployment.yaml"
+          sh "kubectl apply -f k8s/develop/deployment.yaml"
+          echo 'desplegando'
+          echo 'algo'
         }
       }
     }
@@ -155,7 +163,15 @@ spec:
       }
       steps {
         container('gcloud') {
-          echo 'Deploy Staging (QA)'
+          echo 'staging'
+          sh 'gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS'
+          sh "gcloud config set project ${PROJECT_ID}"
+          sh "gcloud container clusters get-credentials jenkins-cd --zone us-central1-c --project jenkins-servinformacion"
+          sh "sed -i.bak 's#{imageTag}#${imageTag}#' k8s/staging/deployment.yaml"
+          sh "cat k8s/staging/deployment.yaml"
+          sh "kubectl apply -f k8s/staging/deployment.yaml"
+          echo 'desplegando'
+          echo 'algo'
         }
       }
     }
@@ -178,9 +194,9 @@ spec:
           sh 'gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS'
           sh "gcloud config set project ${PROJECT_ID}"
           sh "gcloud container clusters get-credentials jenkins-cd --zone us-central1-c --project jenkins-servinformacion"
-          sh "sed -i.bak 's#{imageTag}#${imageTag}#' k8s/deployment.yaml"
-          sh "cat k8s/deployment.yaml"
-          sh "kubectl apply -f k8s/deployment.yaml"
+          sh "sed -i.bak 's#{imageTag}#${imageTag}#' k8s/produccion/deployment.yaml"
+          sh "cat k8s/produccion/deployment.yaml"
+          sh "kubectl apply -f k8s/produccion/deployment.yaml"
           echo 'desplegando'
           echo 'algo'
         }
