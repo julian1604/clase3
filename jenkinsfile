@@ -90,6 +90,36 @@ spec:
         }
       }
     }
+    stage('Build-Image-feature'){
+      when {
+            expression { BRANCH_NAME ==~ /refs\/heads\/(feature.*)/ }
+           }
+      steps {
+        container('gcloud') {
+          echo 'Estamos desplegando en la rama FEATURE'
+        }
+      }
+    }
+    stage('Build-Image-release'){
+      when {
+            expression { BRANCH_NAME ==~ /refs\/heads\/(release.*)/ }
+           } 
+      steps {
+        container('gcloud') {
+          echo 'Estamos desplegando en la rama RELEASE'
+        }
+      }
+    } 
+    stage('Build-Image-prod'){
+      when {
+            expression { BRANCH_NAME ==~ /refs\/heads\/(main|master)/ }
+           }     
+      steps {
+        container('gcloud') {
+          echo 'Estamos desplegando en la rama MAIN para PROD'
+        }
+      }
+    }
     stage('Build-Image'){
       steps {
         container('docker') {
